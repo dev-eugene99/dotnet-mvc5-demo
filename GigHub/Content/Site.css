@@ -53,6 +53,19 @@ h6,
     color: #FFF;
 }
 
+.navbar-brand{
+    font-weight:700;
+}
+
 .navbar-inverse .navbar-brand {
     color: #FFF;
+}
+
+.navbar-inverse .navbar-nav > .open > a, .navbar-inverse .navbar-nav > .open > a:hover, .navbar-inverse .navbar-nav > .open > a:focus {
+    background-color: #d42300;
+}
+
+.dropdown-menu {
+    -webkit-box-shadow: none;    
+    box-shadow: none;
 }

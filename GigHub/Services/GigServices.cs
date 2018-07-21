@@ -1,5 +1,7 @@
 ﻿using GigHub.Models;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace GigHub.Services
 {
@@ -10,6 +12,12 @@ namespace GigHub.Services
         public GigServices()
         {
             _context = new ApplicationDbContext();
+        }
+
+
+        public IEnumerable<Gig> GetUpcomingGigs()
+        {
+            return _context.Gigs.Where(g => g.DateTime > DateTime.Now);
         }
 
         Tuple<int, string> IGigService.AddGig(Gig gig)
@@ -36,6 +44,11 @@ namespace GigHub.Services
         Tuple<int, string> IGigService.EditGig(Gig gig)
         {
             throw new NotImplementedException();
+        }
+
+        IEnumerable<Genre> IGigService.GetGenres()
+        {
+            return _context.Genres;
         }
     }
 }

@@ -2,19 +2,16 @@
 using GigHub.Services;
 using GigHub.ViewModels;
 using Microsoft.AspNet.Identity;
-using System.Linq;
 using System.Web.Mvc;
 
 namespace GigHub.Controllers
 {
     public class GigsController : Controller
     {
-        private readonly ApplicationDbContext _context;
         private readonly IGigService _gigService;
 
         public GigsController()
         {
-            _context = new ApplicationDbContext();
             _gigService = new GigServices();
         }
 
@@ -23,7 +20,7 @@ namespace GigHub.Controllers
         {
             var viewModel = new GigFormViewModel()
             {
-                Genres = _context.Genres.ToList()
+                Genres = _gigService.GetGenres()
             };
 
             return View(viewModel);
@@ -36,7 +33,7 @@ namespace GigHub.Controllers
         {
             if (!ModelState.IsValid)
             {
-                viewModel.Genres = _context.Genres.ToList();
+                viewModel.Genres = _gigService.GetGenres();
                 return View("Create", viewModel);
             }
 

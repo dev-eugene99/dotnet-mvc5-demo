@@ -12,9 +12,47 @@
             <div class="day">@gig.DateTime.ToString("d ")</div>
         </div>
         <div class="details">
-            <span class="artist">@gig.Artist.Name</span>
-            <span class="genre">@gig.Genre.Name</span>
+            <div style="height:30px;">
+                <span class="artist">@gig.Artist.Name</span>
+                <button data-artist-id="@gig.ArtistId" class="btn btn-default btn-sm pull-right js-toggle-follow">Follow ?</button>
+            </div>
+            <div style="height:30px;">
+                <span class="genre">@gig.Genre.Name</span>
+                <button data-gig-id="@gig.Id" class="btn btn-default btn-sm pull-right js-toggle-attendance">Going ?</button>
+            </div>
         </div>
     </li>
     }
 </ul>
+@section scripts
+{
+    <script>
+        $(document).ready(function () {
+            $(".js-toggle-attendance").click(function (e) {
+                var btn = $(e.target)
+                $.post("/api/attendances", { gigId: btn.attr("data-gig-id") })
+                    .done(function () {
+                        btn.removeClass("btn-default")
+                            .addClass("btn-info")
+                            .text("Going");
+                    })
+                    .fail(function () {
+                        alert("something failed!");
+                    })
+            });
+
+            $(".js-toggle-follow").click(function (e) {
+                var btn = $(e.target)
+                $.post("/api/followings", { ArtistId: btn.attr("data-artist-id") })
+                    .done(function () {
+                        btn.removeClass("btn-default")
+                            .addClass("btn-info")
+                            .text("Following");
+                    })
+                    .fail(function () {
+                        alert("something failed!");
+                    })
+            });
+        });
+    </script>
+}

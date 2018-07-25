@@ -344,6 +344,7 @@
     <Content Include="Views\Gigs\Create.cshtml" />
     <Content Include="Views\Web.config" />
     <Content Include="Views\Shared\Artists.cshtml" />
+    <Content Include="Views\Gigs\Mine.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

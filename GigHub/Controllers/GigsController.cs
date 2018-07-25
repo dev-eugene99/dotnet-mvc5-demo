@@ -48,7 +48,7 @@ namespace GigHub.Controllers
             };
             var msg = _gigService.AddGig(gig);
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Mine", "Gigs");
         }
 
         [Authorize]
@@ -57,14 +57,7 @@ namespace GigHub.Controllers
             var userId = User.Identity.GetUserId();
             var gigs = await _gigService.GetUpcomingGigsByArtistIdAsync(userId);
 
-            var view = new GigsViewModel
-            {
-                Heading = "My Upcoming Gigs",
-                Gigs = gigs,
-                ShowActions = false
-            };
-
-            return View("Gigs", view);
+            return View(gigs);
         }
 
         [Authorize]

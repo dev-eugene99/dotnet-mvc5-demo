@@ -58,7 +58,6 @@ namespace GigHub.Services
         {
             var content = await _context.Gigs
                     .Where(g => g.ArtistId == artistId && g.DateTime > DateTime.Now)
-                    .Include(g => g.Artist)
                     .Include(g => g.Genre)
                     .ToListAsync();
             return content;

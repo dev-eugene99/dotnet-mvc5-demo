@@ -19,12 +19,13 @@ namespace GigHub.Controllers
         public IHttpActionResult Follow(ArtistDto artistDto)
         {
             var userId = User.Identity.GetUserId();
-            if (_context.Followings.Any(a => a.FollowerId == userId && a.ArtistId == artistDto.ArtistId))
-                return BadRequest("This following already exists.");
+
+            if (_context.Followings.Any(a => a.FollowerId == userId && a.FolloweeId == artistDto.ArtistId))
+                return BadRequest("following already exists.");
 
             var following = new Following
             {
-                ArtistId = artistDto.ArtistId,
+                FolloweeId = artistDto.ArtistId,
                 FollowerId = userId
             };
             _context.Followings.Add(following);

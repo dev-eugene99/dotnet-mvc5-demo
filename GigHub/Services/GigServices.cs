@@ -1,7 +1,9 @@
 ﻿using GigHub.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace GigHub.Services
 {
@@ -49,6 +51,17 @@ namespace GigHub.Services
         IEnumerable<Genre> IGigService.GetGenres()
         {
             return _context.Genres;
+        }
+
+        public async Task<IEnumerable<Gig>> GetGigsByAttendeeIdAsync(string attendeeId)
+        {
+            var content = await _context.Attendances
+                .Where(a => a.AttendeeId == attendeeId)
+                .Select(a => a.Gig)
+                .Include(g => g.Artist)
+                .Include(g => g.Genre)
+                .ToListAsync();
+            return content;
         }
     }
 }

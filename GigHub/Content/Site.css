@@ -29,6 +29,13 @@ span.field-validation-error {
     font-weight: bold;
 }
 
+.voffset2 { margin-top: 2px; }
+.voffset5 { margin-top: 5px; }
+.voffset10 { margin-top: 10px; }
+.voffset20 { margin-top: 20px; }
+.voffset40 { margin-top: 40px; }
+.voffset80 { margin-top: 80px; }
+
 /* bootstrap override */
 h1,
 h2,

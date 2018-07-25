@@ -2,6 +2,7 @@
 using GigHub.Services;
 using GigHub.ViewModels;
 using Microsoft.AspNet.Identity;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 
 namespace GigHub.Controllers
@@ -47,6 +48,22 @@ namespace GigHub.Controllers
             var msg = _gigService.AddGig(gig);
 
             return RedirectToAction("Index", "Home");
+        }
+
+        [Authorize]
+        public async Task<ActionResult> Attending()
+        {
+            var userId = User.Identity.GetUserId();
+            var gigs = await _gigService.GetGigsByAttendeeIdAsync(userId);
+
+            var view = new GigsViewModel
+            {
+                Heading = "Gigs I'm Attending",
+                Gigs = gigs,
+                ShowActions = false
+            };
+
+            return View("Gigs", view);
         }
     }
 }

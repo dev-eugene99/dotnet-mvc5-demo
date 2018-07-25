@@ -1,6 +1,7 @@
 ﻿using GigHub.Models;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace GigHub.Services
 {
@@ -12,5 +13,6 @@ namespace GigHub.Services
 
         IEnumerable<Gig> GetUpcomingGigs();
         IEnumerable<Genre> GetGenres();
+        Task<IEnumerable<Gig>> GetGigsByAttendeeIdAsync(string attendeeId);
     }
 }

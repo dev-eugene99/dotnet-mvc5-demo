@@ -207,6 +207,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\FollowingsController.cs" />
+    <Compile Include="ViewModels\GigsViewModel.cs" />
     <Compile Include="DTOs\ArtistDto.cs" />
     <Compile Include="DTOs\AttendanceDto.cs" />
     <Compile Include="Controllers\AttendancesController.cs" />
@@ -247,6 +248,10 @@
     <Compile Include="Migrations\201807240036306_AddFollowings.cs" />
     <Compile Include="Migrations\201807240036306_AddFollowings.Designer.cs">
       <DependentUpon>201807240036306_AddFollowings.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201807250337540_AddFollowings1.cs" />
+    <Compile Include="Migrations\201807250337540_AddFollowings1.Designer.cs">
+      <DependentUpon>201807250337540_AddFollowings1.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\ApplicationDbContext.cs" />
@@ -310,7 +315,7 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\About.cshtml" />
     <Content Include="Views\Home\Contact.cshtml" />
-    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Shared\Gigs.cshtml" />
     <Content Include="Views\Account\_ExternalLoginsListPartial.cshtml" />
     <Content Include="Views\Account\ConfirmEmail.cshtml" />
     <Content Include="Views\Account\ExternalLoginConfirmation.cshtml" />
@@ -374,6 +379,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201807240036306_AddFollowings.resx">
       <DependentUpon>201807240036306_AddFollowings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201807250337540_AddFollowings1.resx">
+      <DependentUpon>201807250337540_AddFollowings1.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

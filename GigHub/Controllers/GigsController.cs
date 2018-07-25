@@ -52,6 +52,22 @@ namespace GigHub.Controllers
         }
 
         [Authorize]
+        public async Task<ActionResult> Mine()
+        {
+            var userId = User.Identity.GetUserId();
+            var gigs = await _gigService.GetUpcomingGigsByArtistIdAsync(userId);
+
+            var view = new GigsViewModel
+            {
+                Heading = "My Upcoming Gigs",
+                Gigs = gigs,
+                ShowActions = false
+            };
+
+            return View("Gigs", view);
+        }
+
+        [Authorize]
         public async Task<ActionResult> Attending()
         {
             var userId = User.Identity.GetUserId();

@@ -54,6 +54,16 @@ namespace GigHub.Services
             return _context.Genres;
         }
 
+        public async Task<IEnumerable<Gig>> GetUpcomingGigsByArtistIdAsync(string artistId)
+        {
+            var content = await _context.Gigs
+                    .Where(g => g.ArtistId == artistId && g.DateTime > DateTime.Now)
+                    .Include(g => g.Artist)
+                    .Include(g => g.Genre)
+                    .ToListAsync();
+            return content;
+        }
+
         public async Task<IEnumerable<Gig>> GetGigsByAttendeeIdAsync(string attendeeId)
         {
             var content = await _context.Attendances

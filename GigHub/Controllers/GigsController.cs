@@ -1,4 +1,5 @@
-﻿using GigHub.Models;
+﻿using GigHub.Interfaces;
+using GigHub.Models;
 using GigHub.Services;
 using GigHub.ViewModels;
 using Microsoft.AspNet.Identity;

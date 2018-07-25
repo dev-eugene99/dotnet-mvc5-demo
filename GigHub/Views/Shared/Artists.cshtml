@@ -1,0 +1,43 @@
+﻿@model GigHub.ViewModels.ArtistsViewModel
+@{
+    ViewBag.Title = @Model.Heading;
+}
+
+<h1>@Model.Heading</h1>
+<ul class="gigs voffset40">
+    @foreach(var artist in Model.Artists)
+    {
+    <li>
+        <div class="details">
+            <div style="height:30px;">
+                <span class="artist">
+                    @artist.Name
+                    @if (Model.ShowActions)
+                    {
+                        <button data-artist-id="@artist.Id" class="btn btn-link btn-sm pull-right js-toggle-follow">Follow ?</button>
+                    }
+                </span>
+            </div>
+        </div>
+    </li>
+    }
+</ul>
+@section scripts
+{
+    <script>
+        $(document).ready(function () {
+            $(".js-toggle-follow").click(function (e) {
+                var btn = $(e.target)
+                $.post("/api/followings", { ArtistId: btn.attr("data-artist-id") })
+                    .done(function () {
+                        btn.removeClass("btn-default")
+                            .addClass("btn-info")
+                            .text("Following");
+                    })
+                    .fail(function () {
+                        alert("something failed!");
+                    })
+            });
+        });
+    </script>
+}

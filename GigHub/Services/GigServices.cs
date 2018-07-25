@@ -1,4 +1,5 @@
-﻿using GigHub.Models;
+﻿using GigHub.Interfaces;
+using GigHub.Models;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;

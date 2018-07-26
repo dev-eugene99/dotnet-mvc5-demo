@@ -22,21 +22,22 @@ namespace GigHub.Controllers
         {
             var viewModel = new GigFormViewModel()
             {
+                Heading = "Add a Gig",
                 Genres = _gigService.GetGenres()
             };
 
-            return View(viewModel);
+            return View("GigForm", viewModel);
         }
 
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(GigFormViewModel viewModel)
+        public async Task<ActionResult> Create(GigFormViewModel viewModel)
         {
             if (!ModelState.IsValid)
             {
                 viewModel.Genres = _gigService.GetGenres();
-                return View("Create", viewModel);
+                return View("GigForm", viewModel);
             }
 
             var gig = new Gig
@@ -46,7 +47,57 @@ namespace GigHub.Controllers
                 GenreId = viewModel.Genre,
                 Venue = viewModel.Venue
             };
-            var msg = _gigService.AddGig(gig);
+            var msg = await _gigService.AddGigAsync(gig);
+
+            return RedirectToAction("Mine", "Gigs");
+        }
+
+        [Authorize]
+        public async Task<ActionResult> Edit(int id)
+        {
+            var userId = User.Identity.GetUserId();
+            var gig = await _gigService.GetGigByIdAsync(id);
+            if (gig != null && gig.ArtistId == userId)
+            {
+
+                var viewModel = new GigFormViewModel()
+                {
+                    Heading = "Edit a Gig",
+                    Id = gig.Id,
+                    Genres = _gigService.GetGenres(),
+                    Date = gig.DateTime.ToString("d MMM yyyy"),
+                    Time = gig.DateTime.ToString("HH:mm"),
+                    Genre = gig.GenreId,
+                    Venue = gig.Venue
+                };
+
+                return View("GigForm", viewModel);
+            }
+            return View("Mine"); //error out?
+        }
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Update(GigFormViewModel viewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                viewModel.Genres = _gigService.GetGenres();
+                return View("Mine", viewModel);
+            }
+
+            var userId = User.Identity.GetUserId();
+
+            var gig = await _gigService.GetGigByIdAsync(viewModel.Id);
+            if (gig != null && gig.ArtistId == userId)
+            {
+                gig.DateTime = viewModel.GetDateTime();
+                gig.GenreId = viewModel.Genre;
+                gig.Venue = viewModel.Venue;
+
+                var msg = _gigService.UpdateGigAsync(gig);
+            }
 
             return RedirectToAction("Mine", "Gigs");
         }

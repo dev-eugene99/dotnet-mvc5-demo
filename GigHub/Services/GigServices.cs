@@ -23,13 +23,13 @@ namespace GigHub.Services
             return _context.Gigs.Where(g => g.DateTime > DateTime.Now);
         }
 
-        Tuple<int, string> IGigService.AddGig(Gig gig)
+        public async Task<Tuple<int, string>> AddGigAsync(Gig gig)
         {
             var status = Tuple.Create(0, "SUCCESS");
             try
             {
                 _context.Gigs.Add(gig);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
@@ -39,14 +39,29 @@ namespace GigHub.Services
             return status;
         }
 
-        Tuple<int, string> IGigService.DeleteGig(Gig gig)
+        public async Task<Tuple<int, string>> DeleteGigAsync(Gig gig)
         {
             throw new NotImplementedException();
         }
 
-        Tuple<int, string> IGigService.EditGig(Gig gig)
+        public async Task<Tuple<int, string>> UpdateGigAsync(Gig gig)
         {
-            throw new NotImplementedException();
+            var status = Tuple.Create(0, "SUCCESS");
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                status = Tuple.Create(-1, $"FAILURE: {ex.Message}");
+            }
+            return status;
+        }
+
+        public async Task<Gig> GetGigByIdAsync(int gigId)
+        {
+            var gig = await _context.Gigs.SingleAsync(g => g.Id == gigId);
+            return gig;
         }
 
         IEnumerable<Genre> IGigService.GetGenres()

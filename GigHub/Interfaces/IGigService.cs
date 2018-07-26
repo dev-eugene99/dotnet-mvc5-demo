@@ -7,11 +7,12 @@ namespace GigHub.Interfaces
 {
     public interface IGigService
     {
-        Tuple<int, string> AddGig(Gig gig);
-        Tuple<int, string> EditGig(Gig gig);
-        Tuple<int, string> DeleteGig(Gig gig);
+        Task<Tuple<int, string>> AddGigAsync(Gig gig);
+        Task<Tuple<int, string>> UpdateGigAsync(Gig gig);
+        Task<Tuple<int, string>> DeleteGigAsync(Gig gig);
 
-        IEnumerable<Gig> GetUpcomingGigs();        
+        Task<Gig> GetGigByIdAsync(int gigId);
+        IEnumerable<Gig> GetUpcomingGigs();
         IEnumerable<Genre> GetGenres();
         Task<IEnumerable<Gig>> GetUpcomingGigsByArtistIdAsync(string artistId);
         Task<IEnumerable<Gig>> GetGigsByAttendeeIdAsync(string attendeeId);

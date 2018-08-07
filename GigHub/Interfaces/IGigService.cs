@@ -9,7 +9,7 @@ namespace GigHub.Interfaces
     {
         Task<Tuple<int, string>> AddGigAsync(Gig gig);
         Task<Tuple<int, string>> UpdateGigAsync(Gig gig);
-        Task<Tuple<int, string>> DeleteGigAsync(Gig gig);
+        Task<Tuple<int, string>> CancelGigAsync(Gig gig);
 
         Task<Gig> GetGigByIdAsync(int gigId);
         IEnumerable<Gig> GetUpcomingGigs();

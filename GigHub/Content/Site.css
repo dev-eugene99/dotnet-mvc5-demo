@@ -29,12 +29,29 @@ span.field-validation-error {
     font-weight: bold;
 }
 
-.voffset2 { margin-top: 2px; }
-.voffset5 { margin-top: 5px; }
-.voffset10 { margin-top: 10px; }
-.voffset20 { margin-top: 20px; }
-.voffset40 { margin-top: 40px; }
-.voffset80 { margin-top: 80px; }
+.voffset2 {
+    margin-top: 2px;
+}
+
+.voffset5 {
+    margin-top: 5px;
+}
+
+.voffset10 {
+    margin-top: 10px;
+}
+
+.voffset20 {
+    margin-top: 20px;
+}
+
+.voffset40 {
+    margin-top: 40px;
+}
+
+.voffset80 {
+    margin-top: 80px;
+}
 
 /* bootstrap override */
 h1,
@@ -61,11 +78,11 @@ h6,
     border-color: #ff2a00;
 }
 
-.navbar-inverse .navbar-nav > li > a {
-    color: #FFF;
-}
+    .navbar-inverse .navbar-nav > li > a {
+        color: #FFF;
+    }
 
-.navbar-brand{
+.navbar-brand {
     font-weight: 700;
 }
 
@@ -78,7 +95,7 @@ h6,
 }
 
 .dropdown-menu {
-    -webkit-box-shadow: none;    
+    -webkit-box-shadow: none;
     box-shadow: none;
 }
 
@@ -90,66 +107,65 @@ h6,
 
 /* Page-level styles */
 
-.gigs { 
+.gigs {
     list-style: none;
 }
 
-.gigs > li {
-    position: relative;
-    margin-bottom: 30px;
-}
-
-.gigs > li .date {
-    background: red;
-    color: white;
-    text-align: center;
-    width: 60px;
-    border-radius: 8px;
-
-}
-
-.gigs > li .date .year {
-    font-size: 10px;
-    font-weight: bold;
-    padding: 2px 6px;
-}
-
-.gigs > li .date .month {
-    text-transform: uppercase;
-    font-size: 14px;
-    font-weight: bold;
-    padding: 2px 6px;
-}
-
-.gigs > li .date .day {
-    background: #f7f7f7;
-    color: #333;
-    font-size: 18px;
-    padding: 4px 12px;
-}
-    
-
-.gigs > li .details {
-    position: absolute;
-    top: 0;
-    left: 70px;
-    min-width: 150px;
-}
-
-.gigs > li .details .artist{
-    font-weight: bold;
-    display: block;
-}
-
-    .gigs > li .details .genre {
-        font-size: 15px;
+    .gigs > li {
+        position: relative;
+        margin-bottom: 30px;
     }
 
-    .gigs > li .actions {
-        font-size: 15px;
-        display: none;
-    }
+        .gigs > li .date {
+            background: red;
+            color: white;
+            text-align: center;
+            width: 60px;
+            border-radius: 8px;
+        }
 
-    .gigs > li:hover .actions {
-        display: block;
-    }
+            .gigs > li .date .year {
+                font-size: 10px;
+                font-weight: bold;
+                padding: 2px 6px;
+            }
+
+            .gigs > li .date .month {
+                text-transform: uppercase;
+                font-size: 14px;
+                font-weight: bold;
+                padding: 2px 6px;
+            }
+
+            .gigs > li .date .day {
+                background: #f7f7f7;
+                color: #333;
+                font-size: 18px;
+                padding: 4px 12px;
+            }
+
+
+        .gigs > li .details {
+            position: absolute;
+            top: 0;
+            left: 70px;
+            min-width: 150px;
+        }
+
+            .gigs > li .details .artist {
+                font-weight: bold;
+                display: block;
+            }
+
+            .gigs > li .details .genre {
+                font-size: 15px;
+            }
+
+        .gigs > li .actions {
+            font-size: 15px;
+            display: none;
+        }
+
+        .gigs > li:hover .actions {
+            display: block;
+        }

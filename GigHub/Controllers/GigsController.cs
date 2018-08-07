@@ -14,7 +14,7 @@ namespace GigHub.Controllers
 
         public GigsController()
         {
-            _gigService = new GigServices();
+            _gigService = new GigService();
         }
 
         [Authorize]
@@ -57,8 +57,12 @@ namespace GigHub.Controllers
         {
             var userId = User.Identity.GetUserId();
             var gig = await _gigService.GetGigByIdAsync(id);
-            if (gig != null && gig.ArtistId == userId)
+            if (gig != null)
             {
+                if (gig.ArtistId != userId)
+                {
+                    return Content("Unauthorized Edit Request");
+                }
 
                 var viewModel = new GigFormViewModel()
                 {
@@ -73,7 +77,10 @@ namespace GigHub.Controllers
 
                 return View("GigForm", viewModel);
             }
-            return View("Mine"); //error out?
+            else
+            {
+                return Content("Gig not found");
+            }
         }
 
         [Authorize]

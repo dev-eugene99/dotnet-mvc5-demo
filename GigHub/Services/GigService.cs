@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace GigHub.Services
 {
-    public class GigServices : IGigService
+    public class GigService : IGigService
     {
         private readonly ApplicationDbContext _context;
 
-        public GigServices()
+        public GigService()
         {
             _context = new ApplicationDbContext();
         }
@@ -20,7 +20,9 @@ namespace GigHub.Services
 
         public IEnumerable<Gig> GetUpcomingGigs()
         {
-            return _context.Gigs.Where(g => g.DateTime > DateTime.Now);
+            return _context.Gigs.Where(g => g.DateTime > DateTime.Now && g.IsCanceled == false)
+                .Include(g => g.Artist)
+                .Include(g => g.Genre);
         }
 
         public async Task<Tuple<int, string>> AddGigAsync(Gig gig)
@@ -39,9 +41,20 @@ namespace GigHub.Services
             return status;
         }
 
-        public async Task<Tuple<int, string>> DeleteGigAsync(Gig gig)
+        public async Task<Tuple<int, string>> CancelGigAsync(Gig gig)
         {
-            throw new NotImplementedException();
+            var status = Tuple.Create(0, "SUCCESS");
+            try
+            {
+                gig.IsCanceled = true;
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                status = Tuple.Create(-1, $"FAILURE: {ex.Message}");
+            }
+
+            return status;
         }
 
         public async Task<Tuple<int, string>> UpdateGigAsync(Gig gig)
@@ -72,7 +85,10 @@ namespace GigHub.Services
         public async Task<IEnumerable<Gig>> GetUpcomingGigsByArtistIdAsync(string artistId)
         {
             var content = await _context.Gigs
-                    .Where(g => g.ArtistId == artistId && g.DateTime > DateTime.Now)
+                    .Where(g => 
+                            g.ArtistId == artistId && 
+                            g.DateTime > DateTime.Now && 
+                            g.IsCanceled == false)
                     .Include(g => g.Genre)
                     .ToListAsync();
             return content;

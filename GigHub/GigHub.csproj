@@ -214,6 +214,17 @@
     <Compile Include="Migrations\201807262226575_AddIsCanceledToGig.Designer.cs">
       <DependentUpon>201807262226575_AddIsCanceledToGig.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201808072301264_AddNotification.cs" />
+    <Compile Include="Migrations\201808072301264_AddNotification.Designer.cs">
+      <DependentUpon>201808072301264_AddNotification.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201808082350509_Foo.cs" />
+    <Compile Include="Migrations\201808082350509_Foo.Designer.cs">
+      <DependentUpon>201808082350509_Foo.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Notification.cs" />
+    <Compile Include="Models\NotificationType.cs" />
+    <Compile Include="Models\UserNotification.cs" />
     <Compile Include="Services\ArtistService.cs" />
     <Compile Include="ViewModels\ArtistViewModel.cs" />
     <Compile Include="ViewModels\ArtistsViewModel.cs" />
@@ -400,6 +411,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201807262226575_AddIsCanceledToGig.resx">
       <DependentUpon>201807262226575_AddIsCanceledToGig.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201808072301264_AddNotification.resx">
+      <DependentUpon>201808072301264_AddNotification.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201808082350509_Foo.resx">
+      <DependentUpon>201808082350509_Foo.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

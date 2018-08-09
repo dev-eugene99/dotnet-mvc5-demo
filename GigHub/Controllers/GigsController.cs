@@ -40,13 +40,7 @@ namespace GigHub.Controllers
                 return View("GigForm", viewModel);
             }
 
-            var gig = new Gig
-            {
-                ArtistId = User.Identity.GetUserId(),
-                DateTime = viewModel.GetDateTime(),
-                GenreId = viewModel.Genre,
-                Venue = viewModel.Venue
-            };
+            var gig = new Gig(User.Identity.GetUserId(), viewModel.GetDateTime(), viewModel.Genre, viewModel.Venue);
             var msg = await _gigService.AddGigAsync(gig);
 
             return RedirectToAction("Mine", "Gigs");
@@ -99,11 +93,8 @@ namespace GigHub.Controllers
             var gig = await _gigService.GetGigByIdAsync(viewModel.Id);
             if (gig != null && gig.ArtistId == userId)
             {
-                gig.DateTime = viewModel.GetDateTime();
-                gig.GenreId = viewModel.Genre;
-                gig.Venue = viewModel.Venue;
-
-                var msg = _gigService.UpdateGigAsync(gig);
+                var msg = await _gigService
+                    .UpdateGigAsync(gig, viewModel.GetDateTime(), viewModel.Genre, viewModel.Venue);
             }
 
             return RedirectToAction("Mine", "Gigs");

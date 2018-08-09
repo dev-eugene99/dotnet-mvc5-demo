@@ -31,6 +31,11 @@ namespace GigHub.Services
             try
             {
                 _context.Gigs.Add(gig);
+                gig.Artist = _context.Users.Where(u => u.Id == gig.ArtistId)
+                    .Include(a => a.Followers)
+                    .Single();
+                gig.Create();
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -46,7 +51,7 @@ namespace GigHub.Services
             var status = Tuple.Create(0, "SUCCESS");
             try
             {
-                gig.IsCanceled = true;
+                gig.Cancel();
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -57,11 +62,12 @@ namespace GigHub.Services
             return status;
         }
 
-        public async Task<Tuple<int, string>> UpdateGigAsync(Gig gig)
+        public async Task<Tuple<int, string>> UpdateGigAsync(Gig gig, DateTime newDate, byte newGenreId, String newVenue)
         {
             var status = Tuple.Create(0, "SUCCESS");
             try
             {
+                gig.Modify(newDate, newGenreId, newVenue);
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -73,7 +79,9 @@ namespace GigHub.Services
 
         public async Task<Gig> GetGigByIdAsync(int gigId)
         {
-            var gig = await _context.Gigs.SingleAsync(g => g.Id == gigId);
+            var gig = await _context.Gigs
+                .Include(g => g.Attendances.Select(a => a.Attendee))
+                .SingleAsync(g => g.Id == gigId);
             return gig;
         }
 

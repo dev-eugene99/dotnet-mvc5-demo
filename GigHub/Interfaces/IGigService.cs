@@ -8,7 +8,7 @@ namespace GigHub.Interfaces
     public interface IGigService
     {
         Task<Tuple<int, string>> AddGigAsync(Gig gig);
-        Task<Tuple<int, string>> UpdateGigAsync(Gig gig);
+        Task<Tuple<int, string>> UpdateGigAsync(Gig gig, DateTime newDate, byte newGenreId, String newVenue);
         Task<Tuple<int, string>> CancelGigAsync(Gig gig);
 
         Task<Gig> GetGigByIdAsync(int gigId);

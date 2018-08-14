@@ -1,6 +1,7 @@
 
 ## GigHub
 ** NOTE THIS IS A WIP, PROJECT FILE REFACTORING WILL COME LATER **
+
 GigHub is a project that'll allow:
 
 - Artists to list their upcoming gigs, and

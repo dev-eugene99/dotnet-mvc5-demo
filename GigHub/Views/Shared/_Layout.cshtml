@@ -35,8 +35,57 @@
         </footer>
     </div>
 
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/lib")
     @RenderSection("scripts", required: false)
+    <script type="text/x-underscore-template" id="notifications-template">
+        <ul class="notifications">
+            <%
+            _.each(notifications, function(notification){
+            var action = notification.type === 0 ? "canceled" : notification.type === 3 ? "created" : "none";
+            if (notification.type === 0 || notification.type === 3 ){ %>
+            <li>
+                <span class="highlight"><%= notification.gig.artist.name %></span> has <%= action %> the gig at
+                <%= notification.gig.venue %> on
+                <%= moment(notification.gig.dateTime).format("YYYY MMM D HH:mm") %>.
+            </li>
+            <% } else if (notification.type === 1) { %>
+            <li>
+                <span class="highlight"><%= notification.gig.artist.name %></span> has updated the gig from
+                <%= notification.originalVenue %> on
+                <%= moment(notification.originalDateTime).format("YYYY MMM D HH:mm") %> to
+                <%= notification.gig.venue %> on
+                <%= moment(notification.gig.dateTime).format("YYYY MMM D HH:mm") %>.
+            </li>
+            <% }
+            })
+            %>
+        </ul>
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $.getJSON("/api/notifications", function (notifications) {
+                if (notifications.length === 0)
+                    return;
+
+                $(".js-notifications-count")
+                    .text(notifications.length)
+                    .removeClass("hide")
+                    .addClass("animated bounceInDown");
+
+                $(".notifications").popover({
+                    html: true,
+                    title: "Notifications",
+                    template: '<div class="popover popover-notifications" role="tooltip"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"><div></div>',
+                    content: function () {
+                        const compiled = _.template($("#notifications-template").html());
+                        const html = compiled({ notifications: notifications });
+                        return html;
+                    },
+                    placement: "bottom"
+                });
+            });
+        });
+    </script>
 </body>
 </html>

@@ -1,0 +1,215 @@
+﻿body {
+    padding-top: 90px;
+    padding-bottom: 20px;
+    font-family: Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Override the default bootstrap behavior where horizontal description lists 
+   will truncate terms that are too long to fit in the left column 
+*/
+.dl-horizontal dt {
+    white-space: normal;
+}
+
+/* Set width on the form input elements since they're 100% wide by default */
+input,
+select,
+textarea {
+    max-width: 280px;
+}
+
+span.field-validation-error {
+    color: red;
+    font-weight: bold;
+}
+
+.voffset2 {
+    margin-top: 2px;
+}
+
+.voffset5 {
+    margin-top: 5px;
+}
+
+.voffset10 {
+    margin-top: 10px;
+}
+
+.voffset20 {
+    margin-top: 20px;
+}
+
+.voffset40 {
+    margin-top: 40px;
+}
+
+.voffset80 {
+    margin-top: 80px;
+}
+
+/* bootstrap override */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6 {
+    font-family: Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.tooltip .popover {
+    font-family: Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.navbar-inverse {
+    background-color: #ff2a00;
+    border-color: #ff2a00;
+
+    .navbar-nav {
+        > li > a {
+            color: #FFF;
+        }
+
+        > .open > a, .navbar-inverse .navbar-nav > .open > a:hover, .navbar-inverse .navbar-nav > .open > a:focus {
+            background-color: #d42300;
+        }
+
+        .notifications {
+            position: relative;
+
+            .badge {
+                position: absolute;
+                top: 8px;
+                right: -1px;
+                background: #860909;
+            }
+        }
+
+        .navbar-brand {
+            color: #FFF;
+        }
+    }
+
+    .navbar-brand {
+        font-weight: 700;
+        color: #FFF;
+    }
+}
+
+
+.dropdown-menu {
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+.form-control {
+    font-size: 17px;
+    border-radius: 9px;
+    height: 44px;
+}
+
+.popover {
+    box-shadow: none;
+    -webkit-box-shadow: none;
+}
+
+/* Page-level styles */
+
+.gigs {
+    list-style: none;
+
+    > li {
+        position: relative;
+        margin-bottom: 30px;
+
+        .date {
+            background: red;
+            color: white;
+            text-align: center;
+            width: 60px;
+            border-radius: 8px;
+
+            .year {
+                font-size: 10px;
+                font-weight: bold;
+                padding: 2px 6px;
+            }
+
+            .month {
+                text-transform: uppercase;
+                font-size: 14px;
+                font-weight: bold;
+                padding: 2px 6px;
+            }
+
+            .day {
+                background: #f7f7f7;
+                color: #333;
+                font-size: 18px;
+                padding: 4px 12px;
+            }
+        }
+
+        .details {
+            position: absolute;
+            top: 0;
+            left: 70px;
+            min-width: 150px;
+
+            .artist {
+                font-weight: bold;
+                display: block;
+            }
+
+            .genre {
+                font-size: 15px;
+            }
+        }
+
+        .actions {
+            font-size: 15px;
+            display: none;
+        }
+    }
+
+    > li:hover .actions {
+        display: block;
+    }
+}
+
+
+.popover-notifications {
+    .popover-content {
+        padding: 0;
+    }
+
+    ul.notifications {
+        list-style: none;
+        padding-left: 0;
+
+        > li {
+            border-bottom: 1px solid #ddd;
+            padding: 10px;
+        }
+
+        > li:last-child {
+            border-bottom: none;
+        }
+
+        .highlight {
+            font-weight: bold;
+        }
+    }
+}

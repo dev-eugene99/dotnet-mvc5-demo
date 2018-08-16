@@ -11,6 +11,7 @@ namespace GigHub.API
     public class GigsController : ApiController
     {
         private readonly IGigService _gigService;
+
         public GigsController()
         {
             _gigService = new GigService();

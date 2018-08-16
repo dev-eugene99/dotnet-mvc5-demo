@@ -1,4 +1,6 @@
-﻿using System.Web.Http;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using System.Web.Http;
 
 namespace GigHub
 {
@@ -7,6 +9,9 @@ namespace GigHub
         public static void Register(HttpConfiguration config)
         {
             // TODO: Add any additional configuration code.
+            var settings = GlobalConfiguration.Configuration.Formatters.JsonFormatter.SerializerSettings;
+            settings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            settings.Formatting = Formatting.Indented;
 
             // Web API routes
             config.MapHttpAttributeRoutes();

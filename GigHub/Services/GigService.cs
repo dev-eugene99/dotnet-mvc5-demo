@@ -30,10 +30,10 @@ namespace GigHub.Services
             var status = Tuple.Create(0, "SUCCESS");
             try
             {
-                _context.Gigs.Add(gig);
                 gig.Artist = _context.Users.Where(u => u.Id == gig.ArtistId)
-                    .Include(a => a.Followers)
+                    .Include(a => a.Followers.Select(f => f.Follower))
                     .Single();
+                _context.Gigs.Add(gig);
                 gig.Create();
 
                 await _context.SaveChangesAsync();

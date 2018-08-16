@@ -34,16 +34,23 @@ namespace GigHub.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(GigFormViewModel viewModel)
         {
+            var userId = User.Identity.GetUserId();
             if (!ModelState.IsValid)
             {
                 viewModel.Genres = _gigService.GetGenres();
                 return View("GigForm", viewModel);
             }
 
-            var gig = new Gig(User.Identity.GetUserId(), viewModel.GetDateTime(), viewModel.Genre, viewModel.Venue);
+            var gig = new Gig(userId, viewModel.GetDateTime(), viewModel.Genre, viewModel.Venue);
             var msg = await _gigService.AddGigAsync(gig);
-
-            return RedirectToAction("Mine", "Gigs");
+            if (msg.Item1 == 0)
+            {
+                return RedirectToAction("Mine", "Gigs");
+            }
+            else
+            {
+                return View("GigForm", viewModel);
+            }
         }
 
         [Authorize]

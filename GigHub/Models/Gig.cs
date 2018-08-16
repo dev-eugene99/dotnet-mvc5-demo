@@ -78,8 +78,7 @@ namespace GigHub.Models
 
         private void NotifyFollowers(Notification notification)
         {
-            //@TODO - look into a way to attach
-            foreach (var follower in Artist.Followers.Select(f => f.Follower))
+            foreach (var follower in Artist.Followers.Select(u => u.Follower))
             {
                 follower.Notify(notification);
             }

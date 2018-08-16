@@ -28,7 +28,7 @@
         $(document).ready(function () {
             $(".js-toggle-follow").click(function (e) {
                 var btn = $(e.target)
-                $.post("/api/followings", { ArtistId: btn.attr("data-artist-id") })
+                $.post("/api/followings", { Id: btn.attr("data-artist-id") })
                     .done(function () {
                         btn.removeClass("btn-default")
                             .addClass("btn-info")

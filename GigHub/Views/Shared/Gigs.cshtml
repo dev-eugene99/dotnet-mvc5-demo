@@ -4,8 +4,20 @@
 }
 
 <h1>@Model.Heading</h1>
+@using (Html.BeginForm("Search", "Gigs"))
+{
+    <div class="form-group">
+        <div id="searchGigs" class="input-group">
+            @Html.TextBoxFor(m => m.SearchTerm, new { @class = "form-control", placeholder = "Search by Artist, Genre, etc..." })
+            <span class="input-group-addon">
+                <i class="glyphicon glyphicon-search"></i>
+            </span>
+        </div>
+    </div>
+}
+
 <ul class="gigs voffset40">
-    @foreach(var gig in Model.Gigs)
+    @foreach (var gig in Model.Gigs)
     {
     <li>
         <div class="date">
@@ -37,7 +49,7 @@
             </div>
         </div>
     </li>
-    }
+        }
 </ul>
 @section scripts
 {

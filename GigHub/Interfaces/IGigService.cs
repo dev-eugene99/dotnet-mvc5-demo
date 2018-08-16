@@ -1,6 +1,7 @@
 ﻿using GigHub.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace GigHub.Interfaces
@@ -12,7 +13,7 @@ namespace GigHub.Interfaces
         Task<Tuple<int, string>> CancelGigAsync(Gig gig);
 
         Task<Gig> GetGigByIdAsync(int gigId);
-        IEnumerable<Gig> GetUpcomingGigs();
+        IQueryable<Gig> GetUpcomingGigs();
         IEnumerable<Genre> GetGenres();
         Task<IEnumerable<Gig>> GetUpcomingGigsByArtistIdAsync(string artistId);
         Task<IEnumerable<Gig>> GetGigsByAttendeeIdAsync(string attendeeId);

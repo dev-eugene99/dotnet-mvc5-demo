@@ -170,3 +170,12 @@ h6,
 .popover-notifications ul.notifications .highlight {
   font-weight: bold;
 }
+#searchGigs {
+  width: 300px;
+}
+#searchGigs .form-control {
+  box-shadow: none;
+  -webkit-box-shadow: none;
+  transition: none;
+  -webkit-transition: none;
+}

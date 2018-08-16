@@ -18,7 +18,7 @@ namespace GigHub.Services
         }
 
 
-        public IEnumerable<Gig> GetUpcomingGigs()
+        public IQueryable<Gig> GetUpcomingGigs()
         {
             return _context.Gigs.Where(g => g.DateTime > DateTime.Now && g.IsCanceled == false)
                 .Include(g => g.Artist)

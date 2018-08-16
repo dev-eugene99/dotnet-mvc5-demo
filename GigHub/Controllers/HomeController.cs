@@ -1,6 +1,7 @@
 ﻿using GigHub.Interfaces;
 using GigHub.Services;
 using GigHub.ViewModels;
+using System.Linq;
 using System.Web.Mvc;
 
 namespace GigHub.Controllers
@@ -14,15 +15,24 @@ namespace GigHub.Controllers
             _gigService = new GigService();
         }
 
-        public ActionResult Index()
+        public ActionResult Index(string query = null)
         {
             var upcomingGigs = _gigService.GetUpcomingGigs();
 
+            if (!string.IsNullOrEmpty(query))
+            {
+                upcomingGigs = upcomingGigs
+                    .Where(g =>
+                            g.Artist.Name.Contains(query) ||
+                            g.Genre.Name.Contains(query) ||
+                            g.Venue.Contains(query));
+            }
             var gigsViewModel = new GigsViewModel
             {
                 Heading = "Upcoming Gigs",
                 Gigs = upcomingGigs,
-                ShowActions = User.Identity.IsAuthenticated
+                ShowActions = User.Identity.IsAuthenticated,
+                SearchTerm = query
             };
 
             return View("Gigs", gigsViewModel);

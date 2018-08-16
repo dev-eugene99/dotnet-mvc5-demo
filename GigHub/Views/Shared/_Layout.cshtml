@@ -43,13 +43,13 @@
             _.each(notifications, function(notification){
             var action = notification.type === 0 ? "canceled" : notification.type === 3 ? "created" : "none";
             if (notification.type === 0 || notification.type === 3 ){ %>
-            <li>
+            <li data-notification-id="<%= notification.id %>" class="js-single-notification">
                 <span class="highlight"><%= notification.gig.artist.name %></span> has <%= action %> the gig at
                 <%= notification.gig.venue %> on
                 <%= moment(notification.gig.dateTime).format("YYYY MMM D HH:mm") %>.
             </li>
             <% } else if (notification.type === 1) { %>
-            <li>
+            <li data-notification-id="<%= notification.id %>" class="js-single-notification">
                 <span class="highlight"><%= notification.gig.artist.name %></span> has updated the gig from
                 <%= notification.originalVenue %> on
                 <%= moment(notification.originalDateTime).format("YYYY MMM D HH:mm") %> to
@@ -83,6 +83,17 @@
                         return html;
                     },
                     placement: "bottom"
+                }).on("shown.bs.popover", function () {
+                    seen_notification_ids = []
+                    $.each($('li.js-single-notification'), function () {
+                        seen_notification_ids.push(parseInt($(this).attr("data-notification-id")));
+                    });
+                    $.post("/api/notifications", { "": seen_notification_ids })
+                        .done(function () {
+                            $(".js-notifications-count")
+                                .text("")
+                                .addClass("hide");
+                        });
                 });
             });
         });

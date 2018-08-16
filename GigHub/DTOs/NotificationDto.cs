@@ -5,6 +5,7 @@ namespace GigHub.DTOs
 {
     public class NotificationDto
     {
+        public int Id { get; set; }
         public DateTime DateTime { get; set; }
         public NotificationType Type { get; set; }
         public DateTime? OriginalDateTime { get; set; }

@@ -16,6 +16,11 @@ namespace GigHub.Services
             _context = new ApplicationDbContext();
         }
 
+        public ArtistService(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
         public async Task<IEnumerable<ApplicationUser>> GetArtistsByFollowerIdAsync(string followerId)
         {
             return await _context.Followings

@@ -16,70 +16,55 @@
     </div>
 }
 
-<ul class="gigs voffset40">
+<ul id="gigs" class="gigs voffset40">
     @foreach (var gig in Model.Gigs)
     {
-    <li>
-        <div class="date">
-            <div class="month">@gig.DateTime.ToString("MMM")</div>
-            <div class="day">@gig.DateTime.ToString("d ")</div>
-            <div class="year">@gig.DateTime.ToString("yyyy")</div>
-        </div>
-        <div class="details">
-            <div style="height:30px;">
-                <span class="artist">
-                    @gig.Artist.Name
+        <li>
+            <div class="date">
+                <div class="month">@gig.DateTime.ToString("MMM")</div>
+                <div class="day">@gig.DateTime.ToString("d ")</div>
+                <div class="year">@gig.DateTime.ToString("yyyy")</div>
+            </div>
+            <div class="details">
+                <div style="height:30px;">
+                    <span class="artist">
+                        @Html.ActionLink(gig.Artist.Name, "Details", "Gigs",
+                       new { gig.Id }, null)
 
-                    @if (gig.IsCanceled)
+                        @if (gig.IsCanceled)
+                        {
+                            <span class="label label-warning">Canceled</span>
+                        }
+                        @if (Model.ShowActions)
+                        {
+                            <button data-artist-id="@gig.Artist.Id"
+                                    class="btn btn-link btn-sm pull-right js-toggle-follow">
+                                @(gig.UserIsFollowingArtist ? "Following" : "Follow ?")
+                            </button>
+                        }
+                    </span>
+                </div>
+                <div style="height:30px;">
+                    <span class="genre">@gig.Genre</span>
+                    @if (Model.ShowActions && !gig.IsCanceled)
                     {
-                        <span class="label label-warning">Canceled</span>
+                        <button data-gig-id="@gig.Id"
+                                class="btn
+                                @(gig.UserIsAttending ? "btn-info" : "btn-default")
+                                btn-sm pull-right js-toggle-attendance">
+                            Going @(gig.UserIsAttending ? "" : "?")
+                        </button>
                     }
-                    @if (Model.ShowActions)
-                    {
-                        <button data-artist-id="@gig.ArtistId" class="btn btn-link btn-sm pull-right js-toggle-follow">Follow ?</button>
-                    }
-                </span>
+                </div>
             </div>
-            <div style="height:30px;">
-                <span class="genre">@gig.Genre.Name</span>
-                @if (Model.ShowActions && !gig.IsCanceled)
-                {
-                    <button data-gig-id="@gig.Id" class="btn btn-default btn-sm pull-right js-toggle-attendance">Going ?</button>
-                }
-            </div>
-        </div>
-    </li>
-        }
+        </li>
+    }
 </ul>
 @section scripts
 {
     <script>
         $(document).ready(function () {
-            $(".js-toggle-attendance").click(function (e) {
-                var btn = $(e.target)
-                $.post("/api/attendances", { gigId: btn.attr("data-gig-id") })
-                    .done(function () {
-                        btn.removeClass("btn-default")
-                            .addClass("btn-info")
-                            .text("Going");
-                    })
-                    .fail(function () {
-                        alert("something failed!");
-                    })
-            });
-
-            $(".js-toggle-follow").click(function (e) {
-                var btn = $(e.target)
-                $.post("/api/followings", { Id: btn.attr("data-artist-id") })
-                    .done(function () {
-                        btn.removeClass("btn-default")
-                            .addClass("btn-info")
-                            .text("Following");
-                    })
-                    .fail(function () {
-                        alert("something failed!");
-                    })
-            });
+            GigsController.init("#gigs");
         });
     </script>
 }

@@ -16,13 +16,20 @@ namespace GigHub.Services
         {
             _context = new ApplicationDbContext();
         }
+        public GigService(ApplicationDbContext context)
+        {
+            _context = context;
+        }
 
 
         public IQueryable<Gig> GetUpcomingGigs()
         {
-            return _context.Gigs.Where(g => g.DateTime > DateTime.Now && g.IsCanceled == false)
+            return _context.Gigs
+                .Where(g => g.DateTime > DateTime.Now && g.IsCanceled == false)
                 .Include(g => g.Artist)
-                .Include(g => g.Genre);
+                .Include(g => g.Genre)
+                .Include(g => g.Attendances.Select(a => a.Attendee))
+                .Include(g => g.Artist.Followers.Select(f => f.Follower));                
         }
 
         public async Task<Tuple<int, string>> AddGigAsync(Gig gig)
@@ -85,6 +92,17 @@ namespace GigHub.Services
             return gig;
         }
 
+        public async Task<Gig> GetGigDetailByIdAsync(int gigId)
+        {
+            var gig = await _context.Gigs
+                .Include(g => g.Attendances.Select(a => a.Attendee))
+                .Include(g => g.Genre)
+                .Include(g => g.Artist)
+                .Include(g => g.Artist.Followers.Select(f => f.Follower))
+                .SingleAsync(g => g.Id == gigId);
+            return gig;
+        }
+
         IEnumerable<Genre> IGigService.GetGenres()
         {
             return _context.Genres;
@@ -97,12 +115,14 @@ namespace GigHub.Services
                             g.ArtistId == artistId && 
                             g.DateTime > DateTime.Now && 
                             g.IsCanceled == false)
+                    .Include(g => g.Attendances.Select(a => a.Attendee))
+                    .Include(g => g.Artist.Followers.Select(f => f.Follower))
                     .Include(g => g.Genre)
                     .ToListAsync();
             return content;
         }
 
-        public async Task<IEnumerable<Gig>> GetGigsByAttendeeIdAsync(string attendeeId)
+        public async Task<IList<Gig>> GetGigsByAttendeeIdAsync(string attendeeId)
         {
             var content = await _context.Attendances
                 .Where(a => a.AttendeeId == attendeeId)

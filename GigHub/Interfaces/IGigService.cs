@@ -13,9 +13,10 @@ namespace GigHub.Interfaces
         Task<Tuple<int, string>> CancelGigAsync(Gig gig);
 
         Task<Gig> GetGigByIdAsync(int gigId);
+        Task<Gig> GetGigDetailByIdAsync(int gigId);
         IQueryable<Gig> GetUpcomingGigs();
         IEnumerable<Genre> GetGenres();
         Task<IEnumerable<Gig>> GetUpcomingGigsByArtistIdAsync(string artistId);
-        Task<IEnumerable<Gig>> GetGigsByAttendeeIdAsync(string attendeeId);
+        Task<IList<Gig>> GetGigsByAttendeeIdAsync(string attendeeId);
     }
 }

@@ -1,5 +1,4 @@
 ﻿using GigHub.Interfaces;
-using GigHub.Services;
 using GigHub.ViewModels;
 using Microsoft.AspNet.Identity;
 using System.Collections.Generic;
@@ -12,9 +11,9 @@ namespace GigHub.Controllers
     {
         private readonly IArtistsService _artistsService;
 
-        public ArtistsController()
+        public ArtistsController(IArtistsService artistService)
         {
-            _artistsService = new ArtistService();
+            _artistsService = artistService;
         }
 
         [Authorize]
@@ -37,7 +36,7 @@ namespace GigHub.Controllers
             ArtistsViewModel viewModel = new ArtistsViewModel
             {
                 Heading = "Artists I'm Following",
-                ShowActions = true,
+                ShowActions = false,
                 Artists = artistsList
             };
 

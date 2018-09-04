@@ -1,8 +1,8 @@
 ﻿using GigHub.Interfaces;
 using GigHub.Models;
-using GigHub.Services;
 using GigHub.ViewModels;
 using Microsoft.AspNet.Identity;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 
@@ -12,9 +12,9 @@ namespace GigHub.Controllers
     {
         private readonly IGigService _gigService;
 
-        public GigsController()
+        public GigsController(IGigService gigService)
         {
-            _gigService = new GigService();
+            _gigService = gigService;
         }
 
         [Authorize]
@@ -33,6 +33,25 @@ namespace GigHub.Controllers
         public ActionResult Search(GigsViewModel viewModel)
         {
             return RedirectToAction("Index", "Home", new { query = viewModel.SearchTerm });
+        }
+
+        public async Task<ActionResult> Details(int id)
+        {
+            var gig = await _gigService.GetGigDetailByIdAsync(id);
+            if (gig != null)
+            {
+                var userId = string.Empty;
+                if (Request.IsAuthenticated)
+                {
+                    userId = User.Identity.GetUserId();
+                }
+                
+                var viewModel = new GigDetailViewModel(gig, userId);
+                
+
+                return View(viewModel);
+            }
+            return HttpNotFound();
         }
 
         [Authorize]
@@ -76,7 +95,7 @@ namespace GigHub.Controllers
                     Heading = "Edit a Gig",
                     Id = gig.Id,
                     Genres = _gigService.GetGenres(),
-                    Date = gig.DateTime.ToString("d MMM yyyy"),
+                    Date = gig.DateTime.ToString("yyy MMM d"),
                     Time = gig.DateTime.ToString("HH:mm"),
                     Genre = gig.GenreId,
                     Venue = gig.Venue
@@ -131,7 +150,7 @@ namespace GigHub.Controllers
             var view = new GigsViewModel
             {
                 Heading = "Gigs I'm Attending",
-                Gigs = gigs,
+                Gigs = gigs.Select(g => new GigDetailViewModel(g, userId)).ToList(),
                 ShowActions = false
             };
 

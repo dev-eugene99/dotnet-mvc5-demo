@@ -1,6 +1,7 @@
 ﻿using GigHub.Interfaces;
-using GigHub.Services;
 using GigHub.ViewModels;
+using Microsoft.AspNet.Identity;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 
@@ -10,14 +11,19 @@ namespace GigHub.Controllers
     {
         private readonly IGigService _gigService;
 
-        public HomeController()
+        public HomeController(IGigService gigService)
         {
-            _gigService = new GigService();
+            _gigService = gigService;
         }
 
         public ActionResult Index(string query = null)
         {
             var upcomingGigs = _gigService.GetUpcomingGigs();
+            var userId = string.Empty;
+            if (Request.IsAuthenticated)
+            {
+                userId = User.Identity.GetUserId();
+            }
 
             if (!string.IsNullOrEmpty(query))
             {
@@ -27,10 +33,17 @@ namespace GigHub.Controllers
                             g.Genre.Name.Contains(query) ||
                             g.Venue.Contains(query));
             }
+
+            var gigModels = new List<GigDetailViewModel>();
+            foreach (var g in upcomingGigs)
+            {
+                gigModels.Add(new GigDetailViewModel(g, userId));
+            };
+
             var gigsViewModel = new GigsViewModel
             {
                 Heading = "Upcoming Gigs",
-                Gigs = upcomingGigs,
+                Gigs = gigModels,
                 ShowActions = User.Identity.IsAuthenticated,
                 SearchTerm = query
             };

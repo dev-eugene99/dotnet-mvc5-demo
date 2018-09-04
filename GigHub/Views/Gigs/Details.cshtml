@@ -1,0 +1,54 @@
+﻿@model GigHub.ViewModels.GigDetailViewModel
+@{
+    ViewBag.Title = Model.Heading;
+}
+
+<div id="gigs" class="gig-detail">
+    <span class="artist">
+        @Model.Artist.Name
+        @if (Request.IsAuthenticated)
+        {
+            if (Model.UserIsFollowingArtist)
+            {
+                <button data-artist-id="@Model.Artist.Id"
+                        class="btn btn-link btn-sm pull-right js-toggle-follow">
+                    Following
+                </button>
+            }
+            else
+            {
+                <button data-artist-id="@Model.Artist.Id" class="btn btn-link btn-sm pull-right js-toggle-follow">
+                    Follow
+                </button>
+            }
+        }
+    </span>
+    <div class="perform-at">
+        Performing
+        <span class="genre"> @Model.Genre </span> at
+        <span class="location">@Model.Venue </span> on
+        <span class="date-time">@Model.Date @Model.Time </span>
+    </div>
+    @if (Request.IsAuthenticated)
+    {
+        if (Model.UserIsAttending)
+        {
+            <button class="btn btn-info no-pointer-event">You are attending this event.</button>
+        }
+        else
+        {
+            <button data-gig-id="@Model.Id" class="btn btn-default btn-sm js-toggle-attendance">
+                Going ?
+            </button>
+        }
+    }
+</div>
+
+@section scripts
+{
+    <script>
+        $(document).ready(function () {
+            GigsController.init("#gigs");
+        });
+    </script>
+}

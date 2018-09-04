@@ -179,3 +179,27 @@ h6,
   transition: none;
   -webkit-transition: none;
 }
+.gig-detail {
+  width: 250px;
+  display: block;
+}
+.gig-detail .artist {
+  display: block;
+  padding-bottom: 10px;
+}
+.gig-detail .perform-at {
+  padding-bottom: 10px;
+}
+.gig-detail .perform-at .genre {
+  font-weight: bold;
+}
+.gig-detail .perform-at .location {
+  font-weight: bold;
+}
+.gig-detail .perform-at .date-time {
+  display: block;
+  font-weight: bold;
+}
+.no-pointer-event {
+  pointer-events: none;
+}

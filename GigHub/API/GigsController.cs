@@ -1,5 +1,4 @@
-﻿using GigHub.Interfaces;
-using GigHub.Repositories;
+﻿using GigHub.Core;
 using Microsoft.AspNet.Identity;
 using System;
 using System.Threading.Tasks;
@@ -10,18 +9,18 @@ namespace GigHub.API
     [Authorize]
     public class GigsController : ApiController
     {
-        private readonly IGigRepository gigRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public GigsController()
+        public GigsController(IUnitOfWork unitOfWork)
         {
-            gigRepository = new GigRepository();
+            _unitOfWork = unitOfWork;
         }
 
         [HttpDelete]
         public async Task<IHttpActionResult> Cancel(int id)
         {
             var userId = User.Identity.GetUserId();
-            var gig = await gigRepository.GetGigAsync(id);
+            var gig = await _unitOfWork.Gigs.GetGigAsync(id);
             if (gig == null)
                 return NotFound();
 
@@ -31,7 +30,9 @@ namespace GigHub.API
             {
                 return StatusCode(System.Net.HttpStatusCode.Forbidden);
             }
-            var result = await gigRepository.CancelGigAsync(gig);
+            _unitOfWork.Gigs.CancelGig(gig);
+
+            var result = await _unitOfWork.CompleteAsync();
             if (result.Item1 == 0)
                 return Ok();
             else

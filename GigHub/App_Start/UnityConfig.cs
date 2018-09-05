@@ -1,8 +1,10 @@
-using GigHub.Interfaces;
-using GigHub.Repositories;
+using GigHub.Core;
+using GigHub.Core.Repositories;
+using GigHub.Persistence;
+using GigHub.Persistence.Repositories;
+using System.Web.Http;
 using System.Web.Mvc;
 using Unity;
-using Unity.Mvc5;
 
 namespace GigHub
 {
@@ -15,12 +17,18 @@ namespace GigHub
             // register all your components with the container here
             // it is NOT necessary to register your controllers
 
-            container.RegisterType<IGigRepository, GigRepository>();
+            // e.g. container.RegisterType<ITestService, TestService>();
             container.RegisterType<IArtistRepository, ArtistRepository>();
-            container.RegisterType<IGenreRepository, GenreRepository>();
             container.RegisterType<IAttendanceRepository, AttendanceRepository>();
             container.RegisterType<IFollowingRepository, FollowingRepository>();
-            DependencyResolver.SetResolver(new UnityDependencyResolver(container));
+            container.RegisterType<IGenreRepository, GenreRepository>();
+            container.RegisterType<IGigRepository, GigRepository>();
+            container.RegisterType<IUserNotificationRepository, UserNotificationRepository>();
+            container.RegisterType<IUnitOfWork, UnitOfWork>();
+
+            DependencyResolver.SetResolver(new Unity.Mvc5.UnityDependencyResolver(container));
+
+            GlobalConfiguration.Configuration.DependencyResolver = new Unity.WebApi.UnityDependencyResolver(container);
         }
     }
 }

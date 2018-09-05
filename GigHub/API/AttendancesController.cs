@@ -1,7 +1,6 @@
-﻿using GigHub.DTOs;
-using GigHub.Interfaces;
-using GigHub.Models;
-using GigHub.Repositories;
+﻿using GigHub.Core;
+using GigHub.Core.Models;
+using GigHub.DTOs;
 using Microsoft.AspNet.Identity;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -12,11 +11,11 @@ namespace GigHub.API
     [Authorize]
     public class AttendancesController : ApiController
     {
-        private readonly IAttendanceRepository _attendanceRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public AttendancesController()
+        public AttendancesController(IUnitOfWork unitOfWork)
         {
-            _attendanceRepository = new AttendanceRepository();
+            _unitOfWork = unitOfWork;
         }
 
         [HttpPost]
@@ -24,7 +23,7 @@ namespace GigHub.API
         {
             var userId = User.Identity.GetUserId();
             
-            if (_attendanceRepository.GetAttendance(userId, dto.GigId) == null)
+            if (_unitOfWork.Attendances.GetAttendance(userId, dto.GigId) != null)
                 return BadRequest("The user is already attending this gig.");
 
             var attendance = new Attendance
@@ -33,8 +32,9 @@ namespace GigHub.API
                 AttendeeId = userId
             };
 
-            var response = await _attendanceRepository.AddAttendanceAsync(attendance);
+            _unitOfWork.Attendances.AddAttendance(attendance);
 
+            var response = await _unitOfWork.CompleteAsync();
             if (response.Item1 == 1)
                 return InternalServerError();
 
@@ -44,13 +44,13 @@ namespace GigHub.API
         [HttpDelete]
         public async Task<IHttpActionResult> UnAttend(int id)
         {
-            var attendance = _attendanceRepository.GetAttendance(User.Identity.GetUserId(), id);
+            var attendance = _unitOfWork.Attendances.GetAttendance(User.Identity.GetUserId(), id);
 
             if (attendance == null)
                 return NotFound();
 
-            var response = await _attendanceRepository.RemoveAttendanceAsync(attendance);
-
+            _unitOfWork.Attendances.RemoveAttendance(attendance);
+            var response = await _unitOfWork.CompleteAsync();
             if (response.Item1 == 1)
                 return InternalServerError();
 

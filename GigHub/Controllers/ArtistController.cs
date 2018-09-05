@@ -1,5 +1,7 @@
-﻿using GigHub.Interfaces;
-using GigHub.ViewModels;
+﻿using GigHub.Core;
+using GigHub.Core.Models;
+using GigHub.Core.Repositories;
+using GigHub.Core.ViewModels;
 using Microsoft.AspNet.Identity;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -9,18 +11,18 @@ namespace GigHub.Controllers
 {
     public class ArtistsController : Controller
     {
-        private readonly IArtistRepository _artistRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public ArtistsController(IArtistRepository artistRepository)
+        public ArtistsController(IUnitOfWork unitOfWork)
         {
-            _artistRepository = artistRepository;
+            _unitOfWork = unitOfWork;
         }
 
         [Authorize]
         public async Task<ActionResult> Following()
         {
             var userId = User.Identity.GetUserId();
-            var artists = _artistRepository.GetArtistsByFollowerIdAsync(userId);
+            var artists = _unitOfWork.Artists.GetArtistsByFollowerIdAsync(userId);
 
             ArtistsViewModel viewModel = new ArtistsViewModel
             {
@@ -32,7 +34,7 @@ namespace GigHub.Controllers
             return View("Artists", viewModel);
         }
 
-        private static List<ArtistViewModel> PrepareArtistViewModelList(IEnumerable<Models.ApplicationUser> artists)
+        private static List<ArtistViewModel> PrepareArtistViewModelList(IEnumerable<ApplicationUser> artists)
         {
             var artistsList = new List<ArtistViewModel>();
 

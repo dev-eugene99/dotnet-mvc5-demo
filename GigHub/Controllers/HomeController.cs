@@ -1,5 +1,6 @@
-﻿using GigHub.Interfaces;
-using GigHub.ViewModels;
+﻿using GigHub.Core;
+using GigHub.Core.Models;
+using GigHub.Core.ViewModels;
 using Microsoft.AspNet.Identity;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,25 +10,21 @@ namespace GigHub.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly IGigRepository _gigRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public HomeController(IGigRepository gigRepository)
+        public HomeController(IUnitOfWork unitOfWork)
         {
-            _gigRepository = gigRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public ActionResult Index(string query = null)
         {
-            var upcomingGigs = _gigRepository.GetUpcomingGigs();
-            string userId = GetLoggedInUserId();
-
-            if (!string.IsNullOrEmpty(query))
-                upcomingGigs = FilterGigs(query, upcomingGigs);
+            var upcomingGigs = _unitOfWork.Gigs.GetUpcomingGigs(query);
 
             var gigsViewModel = new GigsViewModel
             {
                 Heading = "Upcoming Gigs",
-                Gigs = PrepareGigDetailViewModelList(upcomingGigs, userId),
+                Gigs = PrepareGigDetailViewModelList(upcomingGigs, GetLoggedInUserId()),
                 ShowActions = User.Identity.IsAuthenticated,
                 SearchTerm = query
             };
@@ -35,7 +32,7 @@ namespace GigHub.Controllers
             return View("Gigs", gigsViewModel);
         }
 
-        private static List<GigDetailViewModel> PrepareGigDetailViewModelList(IQueryable<Models.Gig> upcomingGigs, string userId)
+        private static List<GigDetailViewModel> PrepareGigDetailViewModelList(IQueryable<Gig> upcomingGigs, string userId)
         {
             var gigModels = new List<GigDetailViewModel>();
             foreach (var g in upcomingGigs)
@@ -54,16 +51,6 @@ namespace GigHub.Controllers
             }
 
             return userId;
-        }
-
-        private static IQueryable<Models.Gig> FilterGigs(string query, IQueryable<Models.Gig> upcomingGigs)
-        {
-            upcomingGigs = upcomingGigs
-                .Where(g =>
-                        g.Artist.Name.Contains(query) ||
-                        g.Genre.Name.Contains(query) ||
-                        g.Venue.Contains(query));
-            return upcomingGigs;
         }
 
         public ActionResult About()

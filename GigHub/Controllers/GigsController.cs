@@ -1,6 +1,6 @@
-﻿using GigHub.Interfaces;
-using GigHub.Models;
-using GigHub.ViewModels;
+﻿using GigHub.Core;
+using GigHub.Core.Models;
+using GigHub.Core.ViewModels;
 using Microsoft.AspNet.Identity;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,13 +10,11 @@ namespace GigHub.Controllers
 {
     public class GigsController : Controller
     {
-        private readonly IGigRepository _gigService;
-        private readonly IGenreRepository _genreService;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public GigsController(IGigRepository gigRepository, IGenreRepository genreRepository)
+        public GigsController(IUnitOfWork unitOfWork)
         {
-            _gigService = gigRepository;
-            _genreService = genreRepository;
+            _unitOfWork = unitOfWork;
         }
 
         [Authorize]
@@ -25,7 +23,7 @@ namespace GigHub.Controllers
             var viewModel = new GigFormViewModel()
             {
                 Heading = "Add a Gig",
-                Genres = _genreService.GetGenres()
+                Genres = _unitOfWork.Genres.GetGenres()
             };
 
             return View("GigForm", viewModel);
@@ -39,7 +37,7 @@ namespace GigHub.Controllers
 
         public async Task<ActionResult> Details(int id)
         {
-            var gig = await _gigService.GetGigDetailByIdAsync(id);
+            var gig = await _unitOfWork.Gigs.GetGigDetailByIdAsync(id);
             if (gig == null)
                 return HttpNotFound();
 
@@ -65,12 +63,15 @@ namespace GigHub.Controllers
         {
             if (!ModelState.IsValid)
             {
-                viewModel.Genres = _genreService.GetGenres();
+                viewModel.Genres = _unitOfWork.Genres.GetGenres();
                 return View("GigForm", viewModel);
             }
 
             var gig = new Gig(GetCurrentUserId(), viewModel.GetDateTime(), viewModel.Genre, viewModel.Venue);
-            var msg = await _gigService.AddGigAsync(gig);
+
+            _unitOfWork.Gigs.AddGig(gig);
+
+            var msg = await _unitOfWork.CompleteAsync();
 
             if (msg.Item1 == 0)
                 return RedirectToAction("Mine", "Gigs");
@@ -81,7 +82,7 @@ namespace GigHub.Controllers
         [Authorize]
         public async Task<ActionResult> Edit(int id)
         {
-            var gig = await _gigService.GetGigAsync(id);
+            var gig = await _unitOfWork.Gigs.GetGigAsync(id);
 
             if (gig == null)
                 return HttpNotFound();
@@ -89,7 +90,7 @@ namespace GigHub.Controllers
             if (gig.ArtistId != User.Identity.GetUserId())
                 return new HttpUnauthorizedResult();
 
-            return View("GigForm", new GigFormViewModel(gig, "Edit a Gig", _genreService.GetGenres()));
+            return View("GigForm", new GigFormViewModel(gig, "Edit a Gig", _unitOfWork.Genres.GetGenres()));
         }
 
         [Authorize]
@@ -99,11 +100,11 @@ namespace GigHub.Controllers
         {
             if (!ModelState.IsValid)
             {
-                viewModel.Genres = _genreService.GetGenres();
+                viewModel.Genres = _unitOfWork.Genres.GetGenres();
                 return View("Mine", viewModel);
             }
 
-            var gig = await _gigService.GetGigAsync(viewModel.Id);
+            var gig = await _unitOfWork.Gigs.GetGigAsync(viewModel.Id);
 
             if (gig == null)
                 return HttpNotFound();
@@ -111,8 +112,10 @@ namespace GigHub.Controllers
             if (gig.ArtistId != User.Identity.GetUserId())
                 return new HttpUnauthorizedResult();
 
-            var msg = await _gigService
-                .UpdateGigAsync(gig, viewModel.GetDateTime(), viewModel.Genre, viewModel.Venue);
+            _unitOfWork.Gigs
+                .UpdateGig(gig, viewModel.GetDateTime(), viewModel.Genre, viewModel.Venue);
+
+            var msg = await _unitOfWork.CompleteAsync();
 
             return RedirectToAction("Mine", "Gigs");
         }
@@ -120,14 +123,14 @@ namespace GigHub.Controllers
         [Authorize]
         public async Task<ActionResult> Mine()
         {
-            return View(await _gigService.GetUpcomingGigsByArtistIdAsync(User.Identity.GetUserId()));
+            return View(await _unitOfWork.Gigs.GetUpcomingGigsByArtistIdAsync(User.Identity.GetUserId()));
         }
 
         [Authorize]
         public async Task<ActionResult> Attending()
         {
             var userId = User.Identity.GetUserId();
-            var gigs = _gigService.GetGigsByAttendeeIdAsync(userId);
+            var gigs = _unitOfWork.Gigs.GetGigsByAttendeeIdAsync(userId);
             return View("Gigs", await PrepareGigsViewModel(userId, gigs));
         }
 

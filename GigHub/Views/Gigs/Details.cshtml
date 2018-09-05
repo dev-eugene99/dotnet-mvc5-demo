@@ -3,7 +3,7 @@
     ViewBag.Title = Model.Heading;
 }
 
-<div id="gigs" class="gig-detail">
+<div id="gigs-detail" class="gig-detail">
     <span class="artist">
         @Model.Artist.Name
         @if (Request.IsAuthenticated)
@@ -48,7 +48,7 @@
 {
     <script>
         $(document).ready(function () {
-            GigsController.init("#gigs");
+            GigsController.init("#gigs-detail");
         });
     </script>
 }

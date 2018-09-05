@@ -9,46 +9,61 @@ namespace GigHub.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly IGigService _gigService;
+        private readonly IGigRepository _gigRepository;
 
-        public HomeController(IGigService gigService)
+        public HomeController(IGigRepository gigRepository)
         {
-            _gigService = gigService;
+            _gigRepository = gigRepository;
         }
 
         public ActionResult Index(string query = null)
         {
-            var upcomingGigs = _gigService.GetUpcomingGigs();
+            var upcomingGigs = _gigRepository.GetUpcomingGigs();
+            string userId = GetLoggedInUserId();
+
+            if (!string.IsNullOrEmpty(query))
+                upcomingGigs = FilterGigs(query, upcomingGigs);
+
+            var gigsViewModel = new GigsViewModel
+            {
+                Heading = "Upcoming Gigs",
+                Gigs = PrepareGigDetailViewModelList(upcomingGigs, userId),
+                ShowActions = User.Identity.IsAuthenticated,
+                SearchTerm = query
+            };
+
+            return View("Gigs", gigsViewModel);
+        }
+
+        private static List<GigDetailViewModel> PrepareGigDetailViewModelList(IQueryable<Models.Gig> upcomingGigs, string userId)
+        {
+            var gigModels = new List<GigDetailViewModel>();
+            foreach (var g in upcomingGigs)
+            {
+                gigModels.Add(new GigDetailViewModel(g, userId));
+            };
+            return gigModels;
+        }
+
+        private string GetLoggedInUserId()
+        {
             var userId = string.Empty;
             if (Request.IsAuthenticated)
             {
                 userId = User.Identity.GetUserId();
             }
 
-            if (!string.IsNullOrEmpty(query))
-            {
-                upcomingGigs = upcomingGigs
-                    .Where(g =>
-                            g.Artist.Name.Contains(query) ||
-                            g.Genre.Name.Contains(query) ||
-                            g.Venue.Contains(query));
-            }
+            return userId;
+        }
 
-            var gigModels = new List<GigDetailViewModel>();
-            foreach (var g in upcomingGigs)
-            {
-                gigModels.Add(new GigDetailViewModel(g, userId));
-            };
-
-            var gigsViewModel = new GigsViewModel
-            {
-                Heading = "Upcoming Gigs",
-                Gigs = gigModels,
-                ShowActions = User.Identity.IsAuthenticated,
-                SearchTerm = query
-            };
-
-            return View("Gigs", gigsViewModel);
+        private static IQueryable<Models.Gig> FilterGigs(string query, IQueryable<Models.Gig> upcomingGigs)
+        {
+            upcomingGigs = upcomingGigs
+                .Where(g =>
+                        g.Artist.Name.Contains(query) ||
+                        g.Genre.Name.Contains(query) ||
+                        g.Venue.Contains(query));
+            return upcomingGigs;
         }
 
         public ActionResult About()

@@ -10,11 +10,13 @@ namespace GigHub.Controllers
 {
     public class GigsController : Controller
     {
-        private readonly IGigService _gigService;
+        private readonly IGigRepository _gigService;
+        private readonly IGenreRepository _genreService;
 
-        public GigsController(IGigService gigService)
+        public GigsController(IGigRepository gigRepository, IGenreRepository genreRepository)
         {
-            _gigService = gigService;
+            _gigService = gigRepository;
+            _genreService = genreRepository;
         }
 
         [Authorize]
@@ -23,7 +25,7 @@ namespace GigHub.Controllers
             var viewModel = new GigFormViewModel()
             {
                 Heading = "Add a Gig",
-                Genres = _gigService.GetGenres()
+                Genres = _genreService.GetGenres()
             };
 
             return View("GigForm", viewModel);
@@ -38,20 +40,22 @@ namespace GigHub.Controllers
         public async Task<ActionResult> Details(int id)
         {
             var gig = await _gigService.GetGigDetailByIdAsync(id);
-            if (gig != null)
-            {
-                var userId = string.Empty;
-                if (Request.IsAuthenticated)
-                {
-                    userId = User.Identity.GetUserId();
-                }
-                
-                var viewModel = new GigDetailViewModel(gig, userId);
-                
+            if (gig == null)
+                return HttpNotFound();
 
-                return View(viewModel);
+            string userId = GetCurrentUserId();
+            return View(new GigDetailViewModel(gig, userId));
+        }
+
+        private string GetCurrentUserId()
+        {
+            var userId = string.Empty;
+            if (Request.IsAuthenticated)
+            {
+                userId = User.Identity.GetUserId();
             }
-            return HttpNotFound();
+
+            return userId;
         }
 
         [Authorize]
@@ -59,54 +63,33 @@ namespace GigHub.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(GigFormViewModel viewModel)
         {
-            var userId = User.Identity.GetUserId();
             if (!ModelState.IsValid)
             {
-                viewModel.Genres = _gigService.GetGenres();
+                viewModel.Genres = _genreService.GetGenres();
                 return View("GigForm", viewModel);
             }
 
-            var gig = new Gig(userId, viewModel.GetDateTime(), viewModel.Genre, viewModel.Venue);
+            var gig = new Gig(GetCurrentUserId(), viewModel.GetDateTime(), viewModel.Genre, viewModel.Venue);
             var msg = await _gigService.AddGigAsync(gig);
+
             if (msg.Item1 == 0)
-            {
                 return RedirectToAction("Mine", "Gigs");
-            }
             else
-            {
                 return View("GigForm", viewModel);
-            }
         }
 
         [Authorize]
         public async Task<ActionResult> Edit(int id)
         {
-            var userId = User.Identity.GetUserId();
-            var gig = await _gigService.GetGigByIdAsync(id);
-            if (gig != null)
-            {
-                if (gig.ArtistId != userId)
-                {
-                    return Content("Unauthorized Edit Request");
-                }
+            var gig = await _gigService.GetGigAsync(id);
 
-                var viewModel = new GigFormViewModel()
-                {
-                    Heading = "Edit a Gig",
-                    Id = gig.Id,
-                    Genres = _gigService.GetGenres(),
-                    Date = gig.DateTime.ToString("yyy MMM d"),
-                    Time = gig.DateTime.ToString("HH:mm"),
-                    Genre = gig.GenreId,
-                    Venue = gig.Venue
-                };
+            if (gig == null)
+                return HttpNotFound();
 
-                return View("GigForm", viewModel);
-            }
-            else
-            {
-                return Content("Gig not found");
-            }
+            if (gig.ArtistId != User.Identity.GetUserId())
+                return new HttpUnauthorizedResult();
+
+            return View("GigForm", new GigFormViewModel(gig, "Edit a Gig", _genreService.GetGenres()));
         }
 
         [Authorize]
@@ -116,18 +99,20 @@ namespace GigHub.Controllers
         {
             if (!ModelState.IsValid)
             {
-                viewModel.Genres = _gigService.GetGenres();
+                viewModel.Genres = _genreService.GetGenres();
                 return View("Mine", viewModel);
             }
 
-            var userId = User.Identity.GetUserId();
+            var gig = await _gigService.GetGigAsync(viewModel.Id);
 
-            var gig = await _gigService.GetGigByIdAsync(viewModel.Id);
-            if (gig != null && gig.ArtistId == userId)
-            {
-                var msg = await _gigService
-                    .UpdateGigAsync(gig, viewModel.GetDateTime(), viewModel.Genre, viewModel.Venue);
-            }
+            if (gig == null)
+                return HttpNotFound();
+
+            if (gig.ArtistId != User.Identity.GetUserId())
+                return new HttpUnauthorizedResult();
+
+            var msg = await _gigService
+                .UpdateGigAsync(gig, viewModel.GetDateTime(), viewModel.Genre, viewModel.Venue);
 
             return RedirectToAction("Mine", "Gigs");
         }
@@ -135,26 +120,25 @@ namespace GigHub.Controllers
         [Authorize]
         public async Task<ActionResult> Mine()
         {
-            var userId = User.Identity.GetUserId();
-            var gigs = await _gigService.GetUpcomingGigsByArtistIdAsync(userId);
-
-            return View(gigs);
+            return View(await _gigService.GetUpcomingGigsByArtistIdAsync(User.Identity.GetUserId()));
         }
 
         [Authorize]
         public async Task<ActionResult> Attending()
         {
             var userId = User.Identity.GetUserId();
-            var gigs = await _gigService.GetGigsByAttendeeIdAsync(userId);
+            var gigs = _gigService.GetGigsByAttendeeIdAsync(userId);
+            return View("Gigs", await PrepareGigsViewModel(userId, gigs));
+        }
 
-            var view = new GigsViewModel
+        private static async Task<GigsViewModel> PrepareGigsViewModel(string userId, Task<System.Collections.Generic.IList<Gig>> gigs)
+        {
+            return new GigsViewModel
             {
                 Heading = "Gigs I'm Attending",
-                Gigs = gigs.Select(g => new GigDetailViewModel(g, userId)).ToList(),
+                Gigs = (await gigs).Select(g => new GigDetailViewModel(g, userId)).ToList(),
                 ShowActions = false
             };
-
-            return View("Gigs", view);
         }
     }
 }

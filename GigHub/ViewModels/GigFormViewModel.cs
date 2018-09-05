@@ -44,8 +44,20 @@ namespace GigHub.ViewModels
 
         public DateTime GetDateTime()
         {
-            return DateTime.Parse($"{Date} {Time}");
-            
+            return DateTime.Parse($"{Date} {Time}");            
+        }
+
+        public GigFormViewModel() { }
+
+        public GigFormViewModel(Gig gig, string heading, IEnumerable<Genre> genres)
+        {
+            Heading = heading;
+            Id = gig.Id;
+            Genres = genres;
+            Date = gig.DateTime.ToString("yyy MMM d");
+            Time = gig.DateTime.ToString("HH:mm");
+            Genre = gig.GenreId;
+            Venue = gig.Venue;
         }
     }
 }

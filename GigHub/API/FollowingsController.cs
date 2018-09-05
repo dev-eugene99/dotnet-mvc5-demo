@@ -1,7 +1,9 @@
 ﻿using GigHub.DTOs;
+using GigHub.Interfaces;
 using GigHub.Models;
+using GigHub.Repositories;
 using Microsoft.AspNet.Identity;
-using System.Linq;
+using System.Threading.Tasks;
 using System.Web.Http;
 
 namespace GigHub.API
@@ -9,18 +11,18 @@ namespace GigHub.API
     [Authorize]
     public class FollowingsController : ApiController
     {
-        private ApplicationDbContext _context;
+        private readonly IFollowingRepository _followingRepository;
 
         public FollowingsController()
         {
-            _context = new ApplicationDbContext();
+            _followingRepository = new FollowingRepository();
         }
 
-        public IHttpActionResult Follow(UserDto artistDto)
+        public async Task<IHttpActionResult> Follow(UserDto artistDto)
         {
             var userId = User.Identity.GetUserId();
 
-            if (_context.Followings.Any(a => a.FollowerId == userId && a.FolloweeId == artistDto.Id))
+            if (_followingRepository.GetFollowing(userId, artistDto.Id) != null)
                 return BadRequest("following already exists.");
 
             var following = new Following
@@ -28,24 +30,28 @@ namespace GigHub.API
                 FolloweeId = artistDto.Id,
                 FollowerId = userId
             };
-            _context.Followings.Add(following);
-            _context.SaveChanges();
+
+            var response = await _followingRepository.AddFollowingAsync(following);
+            if (response.Item1 == 1)
+                return InternalServerError();
+
+
 
             return Ok();
         }
 
         [HttpDelete]
-        public IHttpActionResult Unfollow(UserDto artistDto)
+        public async Task<IHttpActionResult> Unfollow(UserDto artistDto)
         {
             var userId = User.Identity.GetUserId();
-            var following = _context.Followings
-                .SingleOrDefault(a => a.FollowerId == userId && a.FolloweeId == artistDto.Id);
+            var following = _followingRepository.GetFollowing(userId, artistDto.Id);
 
             if (following == null)
                 return NotFound();
 
-            _context.Followings.Remove(following);
-            _context.SaveChanges();
+            var response = await _followingRepository.RemoveFollowingAsync(following);
+            if (response.Item1 == 1)
+                return InternalServerError();
 
             return Ok();
         }

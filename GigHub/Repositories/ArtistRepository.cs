@@ -5,18 +5,18 @@ using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace GigHub.Services
+namespace GigHub.Repositories
 {
-    public class ArtistService : IArtistsService
+    public class ArtistRepository : IArtistRepository
     {
         private readonly ApplicationDbContext _context;
 
-        public ArtistService()
+        public ArtistRepository()
         {
             _context = new ApplicationDbContext();
         }
 
-        public ArtistService(ApplicationDbContext context)
+        public ArtistRepository(ApplicationDbContext context)
         {
             _context = context;
         }

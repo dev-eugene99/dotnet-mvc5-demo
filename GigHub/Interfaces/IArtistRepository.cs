@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace GigHub.Interfaces
 {
-    public interface IArtistsService
+    public interface IArtistRepository
     {
         Task<IEnumerable<ApplicationUser>> GetArtistsByFollowerIdAsync(string followerId);
     }

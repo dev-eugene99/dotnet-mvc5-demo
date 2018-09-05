@@ -6,16 +6,15 @@ using System.Threading.Tasks;
 
 namespace GigHub.Interfaces
 {
-    public interface IGigService
+    public interface IGigRepository
     {
         Task<Tuple<int, string>> AddGigAsync(Gig gig);
         Task<Tuple<int, string>> UpdateGigAsync(Gig gig, DateTime newDate, byte newGenreId, String newVenue);
         Task<Tuple<int, string>> CancelGigAsync(Gig gig);
 
-        Task<Gig> GetGigByIdAsync(int gigId);
+        Task<Gig> GetGigAsync(int gigId);
         Task<Gig> GetGigDetailByIdAsync(int gigId);
         IQueryable<Gig> GetUpcomingGigs();
-        IEnumerable<Genre> GetGenres();
         Task<IEnumerable<Gig>> GetUpcomingGigsByArtistIdAsync(string artistId);
         Task<IList<Gig>> GetGigsByAttendeeIdAsync(string attendeeId);
     }

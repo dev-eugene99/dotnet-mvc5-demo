@@ -1,7 +1,9 @@
 ﻿using GigHub.DTOs;
+using GigHub.Interfaces;
 using GigHub.Models;
+using GigHub.Repositories;
 using Microsoft.AspNet.Identity;
-using System.Linq;
+using System.Threading.Tasks;
 using System.Web.Http;
 
 namespace GigHub.API
@@ -10,45 +12,47 @@ namespace GigHub.API
     [Authorize]
     public class AttendancesController : ApiController
     {
-        private ApplicationDbContext _context;
+        private readonly IAttendanceRepository _attendanceRepository;
 
         public AttendancesController()
         {
-            _context = new ApplicationDbContext();
+            _attendanceRepository = new AttendanceRepository();
         }
 
         [HttpPost]
-        public IHttpActionResult Attend(AttendanceDto dto)
+        public async Task<IHttpActionResult> Attend(AttendanceDto dto)
         {
             var userId = User.Identity.GetUserId();
             
-            if (_context.Attendances.Any(a => a.AttendeeId == userId && a.GigId == dto.GigId))
-                return BadRequest("The attendance already exists.");
+            if (_attendanceRepository.GetAttendance(userId, dto.GigId) == null)
+                return BadRequest("The user is already attending this gig.");
 
             var attendance = new Attendance
             {
                 GigId = dto.GigId,
                 AttendeeId = userId
             };
-            _context.Attendances.Add(attendance);
-            _context.SaveChanges();
+
+            var response = await _attendanceRepository.AddAttendanceAsync(attendance);
+
+            if (response.Item1 == 1)
+                return InternalServerError();
 
             return Ok();
         }
 
         [HttpDelete]
-        public IHttpActionResult UnAttend(int id)
+        public async Task<IHttpActionResult> UnAttend(int id)
         {
-            var userId = User.Identity.GetUserId();
-
-            var attendance = _context.Attendances
-                .SingleOrDefault(a => a.AttendeeId == userId && a.GigId == id);
+            var attendance = _attendanceRepository.GetAttendance(User.Identity.GetUserId(), id);
 
             if (attendance == null)
                 return NotFound();
 
-            _context.Attendances.Remove(attendance);
-            _context.SaveChanges();
+            var response = await _attendanceRepository.RemoveAttendanceAsync(attendance);
+
+            if (response.Item1 == 1)
+                return InternalServerError();
 
             return Ok();
         }

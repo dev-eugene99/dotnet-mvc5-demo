@@ -52,11 +52,9 @@ namespace GigHub.ViewModels
             if (!string.IsNullOrEmpty(userId))
             {
                 UserIsAttending = gig.Attendances
-                    .ToList()
                     .Any(a => a.AttendeeId == userId);
 
                 UserIsFollowingArtist = gig.Artist.Followers
-                    .ToList()
                     .Any(f => f.FollowerId == userId);
             }
         }

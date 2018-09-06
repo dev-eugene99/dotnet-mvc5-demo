@@ -21,15 +21,13 @@ namespace GigHub.API
         {
             var userId = User.Identity.GetUserId();
             var gig = await _unitOfWork.Gigs.GetGigAsync(id);
-            if (gig == null)
+
+            if (gig == null || gig.IsCanceled)
                 return NotFound();
 
-            if (gig.IsCanceled)
-                return NotFound();
             if (gig.ArtistId != userId)
-            {
-                return StatusCode(System.Net.HttpStatusCode.Forbidden);
-            }
+                return Unauthorized();
+
             _unitOfWork.Gigs.CancelGig(gig);
 
             var result = await _unitOfWork.CompleteAsync();

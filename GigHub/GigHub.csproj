@@ -259,6 +259,7 @@
     <Compile Include="Core\Repositories\IGenreRepository.cs" />
     <Compile Include="Core\IUnitOfWork.cs" />
     <Compile Include="Core\Repositories\IUserNotificationRepository.cs" />
+    <Compile Include="Persistence\EntityConfigurations\GigConfiguration.cs" />
     <Compile Include="Persistence\Migrations\201807262226575_AddIsCanceledToGig.cs" />
     <Compile Include="Persistence\Migrations\201807262226575_AddIsCanceledToGig.Designer.cs">
       <DependentUpon>201807262226575_AddIsCanceledToGig.cs</DependentUpon>
